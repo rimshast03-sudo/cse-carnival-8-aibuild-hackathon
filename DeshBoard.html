@@ -1,0 +1,1649 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>ExamDesk</title>
+    <style>
+      :root {
+        --bg: #edf2fb;
+        --text: #1b3a6b;
+        --side-bg: #abc4ff;
+        --side-text: #1b3a6b;
+        --side-strong: #0b2447;
+        --side-hover: #9fb8fa;
+        --side-border: #9fb8fa;
+        --muted: #5c6f99;
+        --lbl: #7c93c9;
+        --panel-bg: #fff;
+        --panel-border: #ccdbfd;
+        --shadow: #abc4ff33;
+        --th-bg: #f3f7ff;
+        --th-color: #445a8a;
+        --td-border: #dde6fb;
+        --badge-bg: #e3eaff;
+        --input-border: #ccdbfd;
+        --input-bg: #fff;
+        --chat-bg: #f3f7ff;
+        --quick-border: #ccdbfd;
+        --notice-border: #dde6fb;
+        --modal-overlay: #1b3a6b66;
+        --btn-bg: #ccdbfd;
+        --btn-color: #1b3a6b;
+        --scrollbar-thumb: #ccdbfd;
+        --scrollbar-track: transparent;
+        --accent: #ccdbfd;
+        --accent-text: #1b3a6b;
+      }
+
+      body.dark {
+        --bg: #212529;
+        --text: #f8f9fa;
+        --side-bg: #343a40;
+        --side-text: #e9ecef;
+        --side-strong: #ffffff;
+        --side-hover: #495057;
+        --side-border: #495057;
+        --muted: #ced4da;
+        --lbl: #adb5bd;
+        --panel-bg: #495057;
+        --panel-border: #5a6268;
+        --shadow: #00000033;
+        --th-bg: #3a4046;
+        --th-color: #e9ecef;
+        --td-border: #5a6268;
+        --badge-bg: #5a6268;
+        --input-border: #5a6268;
+        --input-bg: #3a4046;
+        --chat-bg: #3a4046;
+        --quick-border: #5a6268;
+        --notice-border: #5a6268;
+        --modal-overlay: #00000099;
+        --btn-bg: #adb5bd;
+        --btn-color: #212529;
+        --scrollbar-thumb: #adb5bd;
+        --scrollbar-track: transparent;
+        --accent: #adb5bd;
+        --accent-text: #212529;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        transition:
+          background 0.25s,
+          color 0.25s;
+      }
+
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+        border: 0;
+      }
+
+      .app {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .side {
+        width: 245px;
+        background: var(--side-bg);
+        color: var(--side-text);
+        position: fixed;
+        inset: 0 auto 0 0;
+        padding: 18px 14px;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        overflow: hidden;
+        transition:
+          background 0.25s,
+          color 0.25s;
+      }
+
+      .brand {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        color: var(--side-strong);
+        font-weight: 800;
+        font-size: 19px;
+        padding: 8px 8px 18px;
+        border-bottom: 1px solid var(--side-border);
+        flex: none;
+      }
+
+      .brand img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+        background: #fff;
+        border-radius: 9px;
+        padding: 3px;
+      }
+
+      .student {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 16px 8px;
+        flex: none;
+      }
+
+      .avatar {
+        width: 43px;
+        height: 43px;
+        border-radius: 50%;
+        background: var(--accent);
+        color: var(--accent-text);
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+      }
+
+      .student b {
+        display: block;
+        color: var(--side-strong);
+        font-size: 13px;
+      }
+
+      .student small {
+        font-size: 10px;
+        color: var(--muted);
+      }
+
+      .navscroll {
+        flex: 1;
+        overflow-y: auto;
+        padding-right: 4px;
+        scrollbar-width: thin;
+        scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+      }
+
+      .navscroll::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      .navscroll::-webkit-scrollbar-track {
+        background: var(--scrollbar-track);
+      }
+
+      .navscroll::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb);
+        border-radius: 10px;
+      }
+
+      .lbl {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--lbl);
+        padding: 12px 9px 6px;
+      }
+
+      .nav button {
+        display: flex;
+        gap: 11px;
+        width: 100%;
+        padding: 11px 12px;
+        margin: 2px 0;
+        border-radius: 9px;
+        background: transparent;
+        color: var(--side-text);
+        text-align: left;
+      }
+
+      .nav button.active,
+      .nav button:hover {
+        background: var(--side-hover);
+        color: var(--side-strong);
+      }
+
+      .nav .count {
+        margin-left: auto;
+        background: var(--accent);
+        color: var(--accent-text);
+        border-radius: 20px;
+        padding: 2px 7px;
+        font-size: 10px;
+      }
+
+      .nav .chevron {
+        margin-left: auto;
+        font-size: 11px;
+        color: var(--lbl);
+        transition: transform 0.2s;
+      }
+
+      .nav .subnav {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.25s ease;
+      }
+
+      .nav .subnav.open {
+        max-height: 220px;
+      }
+
+      .nav .subnav button {
+        padding-left: 34px;
+        font-size: 13px;
+      }
+
+      .main {
+        margin-left: 245px;
+        width: calc(100% - 245px);
+        padding: 26px 30px;
+      }
+
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+
+      .top h1 {
+        margin: 0;
+        font-size: 27px;
+      }
+
+      .sub {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+
+      .themeBtn {
+        background: var(--panel-bg);
+        border: 1px solid var(--panel-border);
+        border-radius: 10px;
+        padding: 9px 12px;
+        font-size: 16px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--text);
+        transition:
+          background 0.25s,
+          color 0.25s;
+      }
+
+      .view {
+        display: none;
+      }
+
+      .view.active {
+        display: block;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 13px;
+        margin-bottom: 18px;
+      }
+
+      .card,
+      .panel {
+        background: var(--panel-bg);
+        border: 1px solid var(--panel-border);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px var(--shadow);
+        transition:
+          background 0.25s,
+          color 0.25s;
+      }
+
+      .card {
+        padding: 16px;
+      }
+
+      .num {
+        font-size: 26px;
+        font-weight: 800;
+        margin-top: 8px;
+      }
+
+      .muted {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.35fr 0.85fr;
+        gap: 18px;
+      }
+
+      .panel {
+        padding: 18px;
+        margin-bottom: 18px;
+      }
+
+      .ph {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .ph h2 {
+        font-size: 16px;
+        margin: 0;
+      }
+
+      .btn {
+        padding: 9px 12px;
+        border-radius: 9px;
+        background: var(--btn-bg);
+        color: var(--btn-color);
+        font-weight: 700;
+        font-size: 12px;
+      }
+
+      .primary {
+        background: var(--accent);
+        color: var(--accent-text);
+      }
+
+      .danger {
+        background: #fff0f0;
+        color: #d64545;
+      }
+
+      .search {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .search input {
+        flex: 1;
+        padding: 11px 12px;
+        border: 1px solid var(--input-border);
+        border-radius: 9px;
+        outline: 0;
+        background: var(--input-bg);
+        color: var(--text);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      th,
+      td {
+        padding: 10px 8px;
+        border-bottom: 1px solid var(--td-border);
+        text-align: left;
+      }
+
+      th {
+        background: var(--th-bg);
+        color: var(--th-color);
+      }
+
+      .badge {
+        padding: 4px 8px;
+        border-radius: 20px;
+        background: var(--badge-bg);
+        font-size: 10px;
+        font-weight: 700;
+        color: var(--text);
+      }
+
+      .ok {
+        background: #e7f9f1;
+        color: #14825a;
+      }
+
+      .warn {
+        background: #fff4dd;
+        color: #a76a00;
+      }
+
+      .item {
+        padding: 11px 0;
+        border-bottom: 1px solid var(--td-border);
+        font-size: 12px;
+      }
+
+      .item:last-child {
+        border: 0;
+      }
+
+      .item b {
+        font-size: 13px;
+      }
+
+      .item small {
+        display: block;
+        color: var(--muted);
+        margin-top: 4px;
+      }
+
+      .notice {
+        display: flex;
+        gap: 11px;
+        padding: 12px;
+        border: 1px solid var(--notice-border);
+        border-radius: 11px;
+        margin-bottom: 9px;
+      }
+
+      .noticeicon {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: var(--btn-bg);
+        color: var(--btn-color);
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        flex: none;
+      }
+
+      .quick {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 9px;
+      }
+
+      .quick button {
+        background: var(--panel-bg);
+        border: 1px solid var(--quick-border);
+        border-radius: 10px;
+        padding: 12px;
+        text-align: left;
+        color: var(--text);
+      }
+
+      .quick b {
+        display: block;
+        font-size: 12px;
+      }
+
+      .quick small {
+        color: var(--muted);
+      }
+
+      .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: var(--modal-overlay);
+        align-items: center;
+        justify-content: center;
+        z-index: 5;
+        padding: 20px;
+      }
+
+      .modal.show {
+        display: flex;
+      }
+
+      .dialog {
+        background: var(--panel-bg);
+        border-radius: 16px;
+        padding: 20px;
+        width: min(620px, 100%);
+        color: var(--text);
+      }
+
+      .form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 11px;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .field label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+
+      .field input,
+      .field select {
+        padding: 9px;
+        border: 1px solid var(--input-border);
+        border-radius: 8px;
+        background: var(--input-bg);
+        color: var(--text);
+      }
+
+      .foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 15px;
+      }
+
+      .chat {
+        height: 390px;
+        background: var(--chat-bg);
+        border-radius: 12px;
+        padding: 12px;
+        overflow: auto;
+      }
+
+      .msg {
+        max-width: 86%;
+        padding: 10px 12px;
+        border-radius: 11px;
+        margin: 7px 0;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .bot {
+        background: var(--panel-bg);
+        border: 1px solid var(--input-border);
+        color: var(--text);
+      }
+
+      .user {
+        margin-left: auto;
+        background: var(--accent);
+        color: var(--accent-text);
+      }
+
+      .chatbar {
+        display: flex;
+        gap: 8px;
+        margin-top: 9px;
+      }
+
+      .chatbar input {
+        flex: 1;
+        border: 1px solid var(--input-border);
+        border-radius: 9px;
+        padding: 10px;
+        background: var(--input-bg);
+        color: var(--text);
+      }
+
+      .clockbox {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+      }
+
+      .clockbox .time {
+        font-size: 19px;
+        font-weight: 800;
+        color: var(--side-strong);
+        letter-spacing: 0.5px;
+      }
+
+      .clockbox .date {
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      @media (max-width: 1000px) {
+        .cards {
+          grid-template-columns: repeat(3, 1fr);
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 700px) {
+        .side {
+          width: 68px;
+        }
+
+        .brand span,
+        .student div:last-child,
+        .lbl,
+        .nav button span,
+        .nav .count {
+          display: none;
+        }
+
+        .brand,
+        .student {
+          justify-content: center;
+        }
+
+        .main {
+          margin-left: 68px;
+          width: calc(100% - 68px);
+          padding: 18px;
+        }
+
+        .cards {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .form {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="app">
+      <aside class="side">
+        <div class="brand">
+          <div class="clockbox">
+            <span class="time" id="brandTime">--:--:--</span
+            ><span class="date" id="brandDate">Loading...</span>
+          </div>
+        </div>
+        <div class="student">
+          <div class="avatar">S</div>
+          <div><b>Student Name</b><small>Student ID: 2026-001</small></div>
+        </div>
+        <div class="navscroll">
+          <div class="lbl">Student</div>
+          <div class="nav">
+            <button class="active" onclick="show('dashboard', this)">
+              ▦ <span>Dashboard</span></button
+            ><button
+              id="classToggle"
+              onclick="toggleGroup('classSub', 'classChevron')"
+            >
+              ▤ <span>Class</span
+              ><span class="chevron" id="classChevron">▾</span>
+            </button>
+            <div class="subnav" id="classSub">
+              <button data-view="schedule" onclick="show('schedule', this)">
+                ◷ <span>Schedule</span></button
+              ><button
+                data-view="assignments"
+                onclick="show('assignments', this)"
+              >
+                ✓ <span>Assignment</span></button
+              ><button data-view="exams" onclick="show('exams', this)">
+                ▣ <span>Exam</span><span class="count" id="ec"></span>
+              </button>
+            </div>
+            <button
+              id="bookingToggle"
+              onclick="toggleGroup('bookingSub', 'bookingChevron')"
+            >
+              ▥ <span>Booking</span
+              ><span class="chevron" id="bookingChevron">▾</span>
+            </button>
+            <div class="subnav" id="bookingSub">
+              <button data-view="rooms" onclick="show('rooms', this)">
+                ⌂ <span>Room</span></button
+              ><button data-view="events" onclick="show('events', this)">
+                ◈ <span>Events</span>
+              </button>
+            </div>
+            <button onclick="show('announcements', this)">
+              ◌ <span>Announcements</span>
+            </button>
+          </div>
+          <div class="lbl">Management</div>
+          <div class="nav">
+            <button onclick="show('adjustment', this)">
+              ⚙ <span>Adjustment</span></button
+            ><button onclick="show('ai', this)">✦ <span>AI Agent</span></button>
+          </div>
+        </div>
+      </aside>
+      <main class="main">
+        <div class="top">
+          <div>
+            <h1 id="title">Student Dashboard</h1>
+            <div class="sub">
+              Exam announcements, classes, assignments, rooms and events.
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px">
+            <div
+              id="topSearchWrap"
+              class="searchbox"
+              style="margin: 0; width: 310px"
+            >
+              <input
+                id="topSearch"
+                placeholder="Search anything..."
+                onkeydown="
+                  if (event.key === 'Enter') {
+                    show('search');
+                    document.getElementById('global').value = this.value;
+                    search(this.value);
+                  }
+                "
+              /><button
+                class="btn primary"
+                onclick="
+                  show('search');
+                  document.getElementById('global').value =
+                    document.getElementById('topSearch').value;
+                  search(document.getElementById('topSearch').value);
+                "
+              >
+                ⌕
+              </button>
+            </div>
+            <button
+              id="themeBtn"
+              class="themeBtn"
+              onclick="toggleTheme()"
+              title="Toggle dark / light mode"
+            >
+              🌙
+            </button>
+          </div>
+        </div>
+        <section id="dashboard" class="view active">
+          <div id="metrics" class="cards"></div>
+          <div class="grid">
+            <div>
+              <div class="panel">
+                <div class="ph">
+                  <h2>Today's Classes</h2>
+                  <button class="btn" onclick="show('schedule')">
+                    Full schedule
+                  </button>
+                </div>
+                <div id="today"></div>
+              </div>
+              <div class="panel">
+                <div class="ph">
+                  <h2>Upcoming Exams</h2>
+                  <button class="btn" onclick="show('exams')">All exams</button>
+                </div>
+                <div id="dexams"></div>
+              </div>
+              <div class="panel">
+                <div class="ph">
+                  <h2>Latest Announcements</h2>
+                  <button class="btn" onclick="show('announcements')">
+                    All notices
+                  </button>
+                </div>
+                <div id="dnotices"></div>
+              </div>
+            </div>
+            <div>
+              <div class="panel">
+                <div class="ph">
+                  <h2>Quick Actions</h2>
+                </div>
+                <div class="quick">
+                  <button onclick="show('adjustment')">
+                    <b>⚙ Adjustment</b
+                    ><small>Manage all 5 systems</small></button
+                  ><button onclick="show('rooms')">
+                    <b>⌂ Book Room</b><small>Book or cancel</small></button
+                  ><button onclick="show('events')">
+                    <b>◈ Event</b><small>Register or cancel</small></button
+                  ><button onclick="show('ai')">
+                    <b>✦ Ask AI</b><small>Query live data</small>
+                  </button>
+                </div>
+              </div>
+              <div class="panel">
+                <div class="ph">
+                  <h2>Pending Assignments</h2>
+                </div>
+                <div id="dassign"></div>
+              </div>
+              <div class="panel">
+                <div class="ph">
+                  <h2>Rooms & Events</h2>
+                </div>
+                <div id="dres"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="search" class="view">
+          <div class="panel">
+            <div class="ph">
+              <h2>Global Search</h2>
+            </div>
+            <div class="search">
+              <input
+                id="global"
+                placeholder="Search schedules, rooms, events, announcements, assignments..."
+                oninput="search(this.value)"
+              />
+            </div>
+            <div id="results"></div>
+          </div>
+        </section>
+        <section id="schedule" class="view">
+          <div class="panel">
+            <div class="ph">
+              <h2>Schedule</h2>
+              <button class="btn primary" onclick="add('schedule')">
+                + Add
+              </button>
+            </div>
+            <div id="scheduleT"></div>
+          </div>
+        </section>
+        <section id="exams" class="view">
+          <div class="panel">
+            <div class="ph">
+              <h2>Exam Announcement System</h2>
+              <button class="btn primary" onclick="add('announcement', 'Exam')">
+                + Exam Notice
+              </button>
+            </div>
+            <div class="muted" style="margin-bottom: 12px">
+              Only exam notifications are shown in this section.
+            </div>
+            <div id="examT"></div>
+          </div>
+        </section>
+        <section id="announcements" class="view">
+          <div class="panel">
+            <div class="ph">
+              <h2>Announcements</h2>
+              <button class="btn primary" onclick="add('announcement')">
+                + Add Notice
+              </button>
+            </div>
+            <div class="search">
+              <select id="noticeFilter" onchange="render()">
+                <option>All</option>
+                <option>Extra Class</option>
+                <option>Assignment</option>
+                <option>Exam</option>
+              </select>
+            </div>
+            <div id="noticeList"></div>
+          </div>
+        </section>
+        <section id="rooms" class="view">
+          <div class="panel">
+            <div class="ph">
+              <h2>Rooms</h2>
+              <button class="btn primary" onclick="add('room')">
+                + Add Room
+              </button>
+            </div>
+            <div id="roomT"></div>
+          </div>
+        </section>
+        <section id="events" class="view">
+          <div class="panel">
+            <div class="ph">
+              <h2>Events</h2>
+              <button class="btn primary" onclick="add('event')">
+                + Add Event
+              </button>
+            </div>
+            <div id="eventT"></div>
+          </div>
+        </section>
+        <section id="assignments" class="view">
+          <div class="panel">
+            <div class="ph">
+              <h2>Assignments</h2>
+              <button class="btn primary" onclick="add('assignment')">
+                + Add Assignment
+              </button>
+            </div>
+            <div id="assignmentT"></div>
+          </div>
+        </section>
+        <section id="adjustment" class="view">
+          <div class="panel">
+            <div class="ph">
+              <div>
+                <h2>Adjustment</h2>
+                <div class="sub">
+                  CRUD for all 5 systems plus special room/event actions.
+                </div>
+              </div>
+            </div>
+            <div class="quick">
+              <button onclick="adjust('schedule')">
+                <b>Schedule</b><small>Add, edit, delete</small></button
+              ><button onclick="adjust('room')">
+                <b>Rooms</b><small>CRUD + book/cancel</small></button
+              ><button onclick="adjust('event')">
+                <b>Events</b><small>CRUD + register/cancel</small></button
+              ><button onclick="adjust('announcement')">
+                <b>Announcements</b
+                ><small>Only Exam / Extra Class / Assignment</small></button
+              ><button onclick="adjust('assignment')">
+                <b>Assignments</b><small>Add, edit, delete</small>
+              </button>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="ph">
+              <h2 id="adjustTitle">Choose a system</h2>
+              <button
+                id="adjustAdd"
+                class="btn primary"
+                style="display: none"
+                onclick="add(adjustType)"
+              >
+                + Add
+              </button>
+            </div>
+            <div id="adjustT"></div>
+          </div>
+        </section>
+        <section id="ai" class="view">
+          <div class="grid">
+            <div class="panel">
+              <div class="ph">
+                <div>
+                  <h2>AI Agent</h2>
+                  <div class="sub">
+                    Reads and writes the same active state as Adjustment.
+                  </div>
+                </div>
+              </div>
+              <div id="chat" class="chat"></div>
+              <div class="chatbar">
+                <input
+                  id="prompt"
+                  placeholder="Which rooms are available?"
+                /><button class="btn primary" onclick="ask()">Send</button>
+              </div>
+            </div>
+            <div class="panel">
+              <h2>Agent capabilities</h2>
+              <div class="item">
+                <b>Multi-source queries</b
+                ><small
+                  >Schedule + rooms + events + notices + assignments.</small
+                >
+              </div>
+              <div class="item">
+                <b>Room booking</b
+                ><small>Book or cancel available rooms.</small>
+              </div>
+              <div class="item">
+                <b>Event registration</b
+                ><small>Register or cancel event participation.</small>
+              </div>
+              <div class="item">
+                <b>Clarification</b
+                ><small>Vague requests ask for missing details.</small>
+              </div>
+              <div class="item">
+                <b>Authorization</b
+                ><small>Unauthorized destructive requests are refused.</small>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div id="modal" class="modal">
+      <div class="dialog">
+        <div class="ph">
+          <h2 id="mt">Add record</h2>
+          <button class="btn" onclick="closeM()">✕</button>
+        </div>
+        <div id="form" class="form"></div>
+        <div class="foot">
+          <button class="btn" onclick="closeM()">Cancel</button
+          ><button class="btn primary" onclick="save()">Save</button>
+        </div>
+      </div>
+    </div>
+    <script>
+      const seed = {
+        schedule: [
+          {
+            id: 1,
+            course: "CSE 2201",
+            day: "Today",
+            time: "10:00 AM",
+            room: "A-302",
+            teacher: "Dr. Rahman",
+          },
+          {
+            id: 2,
+            course: "MAT 2103",
+            day: "Tomorrow",
+            time: "12:00 PM",
+            room: "B-204",
+            teacher: "Prof. Karim",
+          },
+          {
+            id: 3,
+            course: "EEE 2205",
+            day: "Tuesday",
+            time: "02:00 PM",
+            room: "Lab-2",
+            teacher: "Dr. Hasan",
+          },
+        ],
+        room: [
+          {
+            id: 1,
+            name: "A-302",
+            capacity: 45,
+            status: "Available",
+            bookedBy: "",
+          },
+          {
+            id: 2,
+            name: "B-204",
+            capacity: 30,
+            status: "Booked",
+            bookedBy: "CSE Club",
+          },
+          {
+            id: 3,
+            name: "Lab-2",
+            capacity: 25,
+            status: "Available",
+            bookedBy: "",
+          },
+          {
+            id: 4,
+            name: "Seminar Hall",
+            capacity: 120,
+            status: "Available",
+            bookedBy: "",
+          },
+        ],
+        event: [
+          {
+            id: 1,
+            name: "Tech Fest 2026",
+            date: "2026-09-18",
+            location: "Auditorium",
+            registered: 84,
+            capacity: 200,
+          },
+          {
+            id: 2,
+            name: "AI Workshop",
+            date: "2026-09-10",
+            location: "Lab-2",
+            registered: 25,
+            capacity: 25,
+          },
+          {
+            id: 3,
+            name: "Career Fair",
+            date: "2026-09-24",
+            location: "Main Hall",
+            registered: 132,
+            capacity: 300,
+          },
+        ],
+        announcement: [
+          {
+            id: 1,
+            type: "Exam",
+            title: "Midterm Examination — Database Systems",
+            date: "2026-09-14",
+            details: "Room A-302 • 10:00 AM",
+          },
+          {
+            id: 2,
+            type: "Extra Class",
+            title: "Extra CSE 2201 Class",
+            date: "2026-09-07",
+            details: "Room A-302 • 3:00 PM",
+          },
+          {
+            id: 3,
+            type: "Assignment",
+            title: "Database ER Diagram Due",
+            date: "2026-09-09",
+            details: "Submit through course portal",
+          },
+        ],
+        assignment: [
+          {
+            id: 1,
+            title: "Database ER Diagram",
+            course: "CSE 2201",
+            due: "2026-09-09",
+            status: "Pending",
+          },
+          {
+            id: 2,
+            title: "Calculus Problem Set 3",
+            course: "MAT 2103",
+            due: "2026-09-07",
+            status: "Submitted",
+          },
+          {
+            id: 3,
+            title: "Circuit Simulation",
+            course: "EEE 2205",
+            due: "2026-09-12",
+            status: "Pending",
+          },
+        ],
+      };
+      let state = JSON.parse(localStorage.examdesk || "null") || seed,
+        editId = null,
+        current = null,
+        adjustType = null;
+      if (localStorage.themeMode === "dark")
+        document.body.classList.add("dark");
+      function toggleTheme() {
+        document.body.classList.toggle("dark");
+        const dark = document.body.classList.contains("dark");
+        document.getElementById("themeBtn").textContent = dark ? "☀" : "🌙";
+        localStorage.themeMode = dark ? "dark" : "light";
+      }
+      document.getElementById("themeBtn").textContent =
+        document.body.classList.contains("dark") ? "☀" : "🌙";
+      const fields = {
+        schedule: [
+          ["course", "Course"],
+          ["day", "Day"],
+          ["time", "Time"],
+          ["room", "Room"],
+          ["teacher", "Teacher"],
+        ],
+        room: [
+          ["name", "Room Name"],
+          ["capacity", "Capacity"],
+          ["status", "Status"],
+          ["bookedBy", "Booked By"],
+        ],
+        event: [
+          ["name", "Event Name"],
+          ["date", "Date"],
+          ["location", "Location"],
+          ["registered", "Registered"],
+          ["capacity", "Capacity"],
+        ],
+        announcement: [
+          ["type", "Type"],
+          ["title", "Title"],
+          ["date", "Date"],
+          ["details", "Details"],
+        ],
+        assignment: [
+          ["title", "Title"],
+          ["course", "Course"],
+          ["due", "Due Date"],
+          ["status", "Status"],
+        ],
+      };
+      function toggleGroup(subId, chevId) {
+        const s = document.getElementById(subId),
+          open = s.classList.toggle("open");
+        document.getElementById(chevId).textContent = open ? "▴" : "▾";
+      }
+      function saveState() {
+        localStorage.examdesk = JSON.stringify(state);
+        render();
+      }
+      function show(id, b) {
+        document
+          .querySelectorAll(".view")
+          .forEach((x) => x.classList.remove("active"));
+        document.getElementById(id).classList.add("active");
+        document
+          .querySelectorAll(".nav button")
+          .forEach((x) => x.classList.remove("active"));
+        if (b) b.classList.add("active");
+        const groups = {
+          classSub: {
+            chev: "classChevron",
+            toggle: "classToggle",
+            views: ["schedule", "exams", "assignments"],
+          },
+          bookingSub: {
+            chev: "bookingChevron",
+            toggle: "bookingToggle",
+            views: ["rooms", "events"],
+          },
+        };
+        Object.entries(groups).forEach(([subId, g]) => {
+          if (g.views.includes(id)) {
+            const sub = document.getElementById(subId);
+            sub.classList.add("open");
+            document.getElementById(g.chev).textContent = "▴";
+            document.getElementById(g.toggle).classList.add("active");
+            if (!b) {
+              const el = document.querySelector(
+                `#${subId} button[data-view="${id}"]`,
+              );
+              if (el) el.classList.add("active");
+            }
+          }
+        });
+        document.getElementById("topSearchWrap").style.display =
+          id === "dashboard" ? "flex" : "none";
+        document.getElementById("title").textContent = {
+          dashboard: "Student Dashboard",
+          search: "Global Search",
+          schedule: "Class Schedule",
+          exams: "Exam Announcement System",
+          announcements: "Announcements",
+          rooms: "Rooms",
+          events: "Events",
+          assignments: "Assignments",
+          adjustment: "Adjustment",
+          ai: "AI Agent",
+        }[id];
+        render();
+        if (id === "ai") initAI();
+      }
+      function add(type, forced) {
+        editId = null;
+        current = type;
+        document.getElementById("mt").textContent = "Add " + type;
+        let r = {};
+        if (forced) r.type = forced;
+        build(r);
+        document.getElementById("modal").classList.add("show");
+      }
+      function edit(type, id) {
+        editId = id;
+        current = type;
+        document.getElementById("mt").textContent = "Edit " + type;
+        build(state[type].find((x) => x.id === id));
+        document.getElementById("modal").classList.add("show");
+      }
+      function build(r) {
+        document.getElementById("form").innerHTML = fields[current]
+          .map(
+            ([k, l]) =>
+              `<div class="field"><label>${l}</label>${k === "type" ? `<select id="f_${k}">${["Exam", "Extra Class", "Assignment"].map((x) => `<option ${r[k] === x ? "selected" : ""}>${x}</option>`).join("")}</select>` : `<input id="f_${k}" value="${String(r[k] ?? "").replaceAll('"', "&quot;")}">`}</div>`,
+          )
+          .join("");
+      }
+      function closeM() {
+        document.getElementById("modal").classList.remove("show");
+      }
+      function save() {
+        let d = {};
+        fields[current].forEach(
+          ([k]) => (d[k] = document.getElementById("f_" + k).value),
+        );
+        ["capacity", "registered"].forEach((k) => {
+          if (k in d) d[k] = Number(d[k] || 0);
+        });
+        if (editId)
+          Object.assign(
+            state[current].find((x) => x.id === editId),
+            d,
+          );
+        else {
+          d.id = Date.now();
+          state[current].push(d);
+        }
+        closeM();
+        saveState();
+      }
+      function del(t, id) {
+        if (confirm("Delete this record?")) {
+          state[t] = state[t].filter((x) => x.id !== id);
+          saveState();
+        }
+      }
+      function special(t, id, a) {
+        let r = state[t].find((x) => x.id === id);
+        if (t === "room") {
+          if (a === "book") {
+            if (r.status !== "Available")
+              return alert("Room is not available.");
+            r.status = "Booked";
+            r.bookedBy = "Current Student";
+          } else {
+            r.status = "Available";
+            r.bookedBy = "";
+          }
+        } else {
+          if (a === "reg") {
+            if (r.registered >= r.capacity) return alert("Event is full.");
+            r.registered++;
+          } else r.registered = Math.max(0, r.registered - 1);
+        }
+        saveState();
+      }
+      function makeTable(t, rows = state[t], actions = true) {
+        let cs = fields[t].map((x) => x[0]),
+          h =
+            "<table><thead><tr>" +
+            cs.map((c) => `<th>${c}</th>`).join("") +
+            (actions ? "<th>Actions</th>" : "") +
+            "</tr></thead><tbody>";
+        rows.forEach((r) => {
+          h +=
+            "<tr>" +
+            cs
+              .map(
+                (c) =>
+                  `<td>${c === "status" || c === "type" ? `<span class="badge ${r[c] === "Available" || r[c] === "Submitted" ? "ok" : r[c] === "Booked" ? "warn" : ""}">${r[c]}</span>` : r[c]}</td>`,
+              )
+              .join("");
+          if (actions) {
+            h += `<td><button class="btn" onclick="edit('${t}',${r.id})">Edit</button> <button class="btn danger" onclick="del('${t}',${r.id})">Delete</button>`;
+            if (t === "room")
+              h +=
+                r.status === "Available"
+                  ? ` <button class="btn" onclick="special('room',${r.id},'book')">Book</button>`
+                  : ` <button class="btn" onclick="special('room',${r.id},'cancel')">Cancel</button>`;
+            if (t === "event")
+              h += ` <button class="btn" onclick="special('event',${r.id},'reg')">Register</button> <button class="btn" onclick="special('event',${r.id},'cancel')">Cancel</button>`;
+            h += "</td>";
+          }
+          h += "</tr>";
+        });
+        return h + "</tbody></table>";
+      }
+      function render() {
+        let exams = state.announcement.filter((x) => x.type === "Exam"),
+          pending = state.assignment.filter((x) => x.status === "Pending"),
+          free = state.room.filter((x) => x.status === "Available");
+        document.getElementById("metrics").innerHTML = [
+          ["▣", exams.length, "Upcoming Exams"],
+          ["◷", state.schedule.length, "Classes"],
+          ["✓", pending.length, "Pending Assignments"],
+          ["⌂", free.length, "Available Rooms"],
+          ["◈", state.event.length, "Events"],
+        ]
+          .map(
+            (x) =>
+              `<div class="card"><div>${x[0]}</div><div class="num">${x[1]}</div><div class="muted">${x[2]}</div></div>`,
+          )
+          .join("");
+        document.getElementById("today").innerHTML =
+          state.schedule
+            .filter((x) => x.day === "Today")
+            .map(
+              (x) =>
+                `<div class="item"><b>${x.course}</b> <span class="badge">${x.time}</span><small>${x.teacher} · Room ${x.room}</small></div>`,
+            )
+            .join("") || '<div class="muted">No classes today.</div>';
+        document.getElementById("dexams").innerHTML =
+          exams
+            .map(
+              (x) =>
+                `<div class="item"><b>${x.title}</b><small>${x.date} · ${x.details}</small></div>`,
+            )
+            .join("") || '<div class="muted">No exam notices.</div>';
+        document.getElementById("dnotices").innerHTML = state.announcement
+          .map(
+            (x) =>
+              `<div class="item"><b>${x.title}</b> <span class="badge">${x.type}</span><small>${x.date}</small></div>`,
+          )
+          .join("");
+        document.getElementById("dassign").innerHTML =
+          pending
+            .map(
+              (x) =>
+                `<div class="item"><b>${x.title}</b><small>${x.course} · Due ${x.due}</small></div>`,
+            )
+            .join("") || '<div class="muted">No pending assignments.</div>';
+        document.getElementById("dres").innerHTML =
+          `<div class="item"><b>${free.length}</b> rooms currently available<small>${free.map((x) => x.name).join(", ")}</small></div><div class="item"><b>${state.event.filter((x) => x.registered < x.capacity).length}</b> events accepting registrations</div>`;
+        document.getElementById("ec").textContent = exams.length;
+        document.getElementById("scheduleT").innerHTML = makeTable("schedule");
+        document.getElementById("examT").innerHTML = makeTable(
+          "announcement",
+          exams,
+        );
+        let f = document.getElementById("noticeFilter")?.value || "All";
+        document.getElementById("noticeList").innerHTML =
+          state.announcement
+            .filter((x) => f === "All" || x.type === f)
+            .map(
+              (x) =>
+                `<div class="notice"><div class="noticeicon">${x.type === "Exam" ? "E" : x.type === "Assignment" ? "A" : "C"}</div><div><b>${x.title}</b><div class="muted"><span class="badge">${x.type}</span> · ${x.date} · ${x.details}</div></div></div>`,
+            )
+            .join("") || '<div class="muted">No notices.</div>';
+        document.getElementById("roomT").innerHTML = makeTable("room");
+        document.getElementById("eventT").innerHTML = makeTable("event");
+        document.getElementById("assignmentT").innerHTML =
+          makeTable("assignment");
+        if (adjustType) {
+          document.getElementById("adjustTitle").textContent =
+            adjustType[0].toUpperCase() + adjustType.slice(1) + " Management";
+          document.getElementById("adjustAdd").style.display = "inline-block";
+          document.getElementById("adjustT").innerHTML = makeTable(adjustType);
+        }
+      }
+      function adjust(t) {
+        adjustType = t;
+        render();
+      }
+      function search(q) {
+        q = q.toLowerCase().trim();
+        let out = [];
+        Object.entries(state).forEach(([t, rs]) =>
+          rs.forEach((r) => {
+            if (JSON.stringify(r).toLowerCase().includes(q)) out.push([t, r]);
+          }),
+        );
+        let box = document.getElementById("results");
+        if (box)
+          box.innerHTML = q
+            ? out
+                .map(
+                  ([t, r]) =>
+                    `<div class="item"><span class="badge">${t}</span> <b>${r.title || r.name || r.course || r.type || "Record"}</b><small>${Object.entries(
+                      r,
+                    )
+                      .filter((x) => x[0] !== "id")
+                      .map((x) => x[0] + ": " + x[1])
+                      .join(" · ")}</small></div>`,
+                )
+                .join("") || '<div class="muted">No results.</div>'
+            : "";
+      }
+      function initAI() {
+        let c = document.getElementById("chat");
+        if (!c.children.length)
+          c.innerHTML =
+            '<div class="msg bot">Hello! Ask about exams, assignments, schedules, rooms or events.</div>';
+      }
+      function ask() {
+        let i = document.getElementById("prompt"),
+          q = i.value.trim();
+        if (!q) return;
+        let c = document.getElementById("chat");
+        c.innerHTML += `<div class="msg user">${q}</div>`;
+        i.value = "";
+        let s = q.toLowerCase(),
+          a =
+            "I can help with exams, assignments, schedules, rooms and events.";
+        if ((s.includes("delete") || s.includes("remove")) && s.includes("all"))
+          a = "I can’t perform unauthorized destructive bulk actions.";
+        else if (s.includes("book") && s.includes("room")) {
+          if (
+            !/today|tomorrow|monday|tuesday|wednesday|thursday|friday|saturday|\d/.test(
+              s,
+            )
+          )
+            a = "What date and time do you need for the room?";
+          else {
+            let r = state.room.find((x) => x.status === "Available");
+            if (r) {
+              r.status = "Booked";
+              r.bookedBy = "AI Agent / Current Student";
+              saveState();
+              a = "Booked " + r.name + " for you.";
+            } else a = "No rooms are currently available.";
+          }
+        } else if (s.includes("available") && s.includes("room")) {
+          let r = state.room.filter((x) => x.status === "Available");
+          a = r.length
+            ? "Available rooms: " +
+              r.map((x) => x.name + " (" + x.capacity + " seats)").join(", ")
+            : "No rooms are currently available.";
+        } else if (s.includes("exam"))
+          a =
+            state.announcement
+              .filter((x) => x.type === "Exam")
+              .map((x) => x.title + " — " + x.date + " — " + x.details)
+              .join("<br>") || "No exam notices.";
+        else if (s.includes("assignment"))
+          a =
+            "Pending: " +
+            state.assignment
+              .filter((x) => x.status === "Pending")
+              .map((x) => x.title)
+              .join(", ");
+        else if (s.includes("schedule") || s.includes("class"))
+          a = state.schedule
+            .map(
+              (x) => x.course + " — " + x.day + " " + x.time + " — " + x.room,
+            )
+            .join("<br>");
+        setTimeout(() => {
+          c.innerHTML += `<div class="msg bot">${a}</div>`;
+          c.scrollTop = c.scrollHeight;
+        }, 120);
+      }
+      function updateClock() {
+        const now = new Date();
+        const timeStr = now.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+        });
+        const dateStr = now.toLocaleDateString([], {
+          weekday: "short",
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+        const t = document.getElementById("brandTime"),
+          d = document.getElementById("brandDate");
+        if (t) t.textContent = timeStr;
+        if (d) d.textContent = dateStr;
+      }
+      updateClock();
+      setInterval(updateClock, 1000);
+      render();
+      // Function to fetch data from Express API endpoints
+async function loadDashboardData() {
+  try {
+    // 1. Trigger parallel fetch requests to backend endpoints
+    const [
+      eventsRes,
+      assignmentsRes,
+      announcementsRes,
+      roomsRes,
+      schedulesRes
+    ] = await Promise.all([
+      fetch('/api/events'),
+      fetch('/api/assignments'),
+      fetch('/api/announcements'),
+      fetch('/api/rooms'),
+      fetch('/api/schedules')
+    ]);
+
+    // 2. Parse JSON responses returned by controllers
+    const events = await eventsRes.json();
+    const assignments = await assignmentsRes.json();
+    const announcements = await announcementsRes.json();
+    const rooms = await roomsRes.json();
+    const schedules = await schedulesRes.json();
+
+    // 3. Render parsed data into HTML container elements
+    renderEvents(events.data || events);
+    renderAssignments(assignments.data || assignments);
+    renderAnnouncements(announcements.data || announcements);
+    renderRooms(rooms.data || rooms);
+    renderSchedules(schedules.data || schedules);
+
+  } catch (error) {
+    console.error('Error fetching dashboard data from API:', error);
+  }
+}
+
+// Helper rendering functions to update DOM
+function renderEvents(items) {
+  const container = document.getElementById('events-container');
+  if (!container) return;
+  
+  container.innerHTML = items.map(event => `
+    <div class="event-card">
+      <h3>${event.title}</h3>
+      <p>Date: ${new Date(event.date).toLocaleDateString()}</p>
+      <p>${event.description || ''}</p>
+    </div>
+  `).join('');
+}
+
+function renderAssignments(items) {
+  const container = document.getElementById('assignments-container');
+  if (!container) return;
+
+  container.innerHTML = items.map(item => `
+    <div class="assignment-card">
+      <h3>${item.title}</h3>
+      <p>Course: ${item.course || 'N/A'}</p>
+      <p>Due: ${item.dueDate ? new Date(item.dueDate).toLocaleDateString() : 'N/A'}</p>
+    </div>
+  `).join('');
+}
+
+function renderAnnouncements(items) {
+  const container = document.getElementById('announcements-container');
+  if (!container) return;
+
+  container.innerHTML = items.map(item => `
+    <div class="announcement-card">
+      <h3>${item.title}</h3>
+      <p>${item.content || item.message || ''}</p>
+    </div>
+  `).join('');
+}
+
+function renderRooms(items) {
+  const container = document.getElementById('rooms-container');
+  if (!container) return;
+
+  container.innerHTML = items.map(room => `
+    <div class="room-card">
+      <h3>Room ${room.number || room.name}</h3>
+      <p>Capacity: ${room.capacity || 'N/A'}</p>
+    </div>
+  `).join('');
+}
+
+function renderSchedules(items) {
+  const container = document.getElementById('schedules-container');
+  if (!container) return;
+
+  container.innerHTML = items.map(schedule => `
+    <div class="schedule-card">
+      <p>Course: ${schedule.courseCode || schedule.subject}</p>
+      <p>Time: ${schedule.startTime} - ${schedule.endTime}</p>
+    </div>
+  `).join('');
+}
+
+// Trigger fetch when DOM content is fully loaded
+document.addEventListener('DOMContentLoaded', loadDashboardData);
+    </script>
+  </body>
+</html>
